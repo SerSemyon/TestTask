@@ -1,29 +1,41 @@
+using System.Drawing;
+
 namespace TestTask
 {
     public partial class Form1 : Form
     {
-        static Bitmap SquareBM = new Bitmap(10,10);
+        static Bitmap SquareBM = new Bitmap(10, 10);
         public Form1()
         {
             InitializeComponent();
         }
 
+        private void testElement1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void testElement1_Paint_1(object sender, PaintEventArgs e)
+        {
+
+        }
+
         private void testElement1_Click(object sender, EventArgs e)
         {
-            testElement1.CreateGraphics();
-            Bitmap background = new Bitmap(testElement1.Width, testElement1.Height);
-            Point position = ((System.Windows.Forms.MouseEventArgs)e).Location;
-            int x = position.X - testElement1.Location.X;
-            int y = position.Y - testElement1.Location.Y;
-            for (int i = 0; i < testElement1.Width; i++)
-            {
-                background.SetPixel(i,y, Color.Black);
-            }
-            for (int i = 0; i < testElement1.Height; i++)
-            {
-                background.SetPixel(x,i, Color.Black);
-            }
-            testElement1.Image = background;
+
+        }
+
+        private void testElement1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            Graphics g = testElement1.CreateGraphics();
+            Brush fillPen = new SolidBrush(Color.FromArgb(255, 0, 255, 255));
+            g.FillEllipse(fillPen, 0, 0, 100, 100);
+            testElement1.entryField.Draw(g, testElement1.font, new Point(0, 0));
+        }
+
+        private void testElement1_SizeChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
