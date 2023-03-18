@@ -13,16 +13,18 @@ namespace TestTask
         public Point position;
         public bool hide = true;
         Button[] buttons = new Button[6];
+        EventHandler otherCommand;
 
-        public ContextMenu()
+        public ContextMenu(TestElement testElement)
         {
             position = new Point(0, 0);
-            buttons[0] = new Button("Добавить", TestElemenCommand.add);
-            buttons[1] = new Button("Удалить", TestElemenCommand.delete);
-            buttons[2] = new Button("+ ширина", TestElemenCommand.incWidth);
-            buttons[3] = new Button("- ширина", TestElemenCommand.decWidth);
-            buttons[4] = new Button("+ высота", TestElemenCommand.incHeight);
-            buttons[5] = new Button("- высота", TestElemenCommand.decHeight);
+            buttons[0] = new Button("Добавить", testElement.AddLine);
+            buttons[1] = new Button("Удалить", testElement.DeleteLine);
+            buttons[2] = new Button("+ ширина", testElement.IncWidth);
+            buttons[3] = new Button("- ширина", testElement.DecWidth);
+            buttons[4] = new Button("+ высота", testElement.IncHeight);
+            buttons[5] = new Button("- высота", testElement.DecHeight);
+            otherCommand = testElement.HideContextMenu;
         }
         public Point Draw(Graphics g, Font font)
         {
@@ -39,24 +41,25 @@ namespace TestTask
             }
             return position;
         }
-        public void Click(Point point)
-        {
 
-        }
-        public TestElemenCommand FindSelectedObject(Point location)
+        public void Click(Point location)
         {
-            if (hide)
-                return TestElemenCommand.none;
+            //if (hide)
+            //    return TestElemenCommand.none;
             if (location.X < position.X || location.Y < position.Y
                 || location.X > position.X + lineWidth || location.Y > position.Y + lineHeight * buttons.Length)
-                return TestElemenCommand.none;
+            {
+                otherCommand(this, EventArgs.Empty);
+                return;
+            }
             Point buttonLocation = position;
             for (int i = 0; i < buttons.Length; i++)
             {
                 if (buttons[i].Intersect(ref buttonLocation, location))
-                    return buttons[i].Command;
+                {
+                    buttons[i].Click();
+                }
             }
-            return TestElemenCommand.none;
         }
     }
 }

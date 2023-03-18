@@ -104,7 +104,7 @@ namespace TestTask
             lines[0].lines[1].AddLine("dfdsaf");
             lines[0].AddLine("Sggsg");
             MouseClick += OnClick;
-            contextMenu = new ContextMenu();
+            contextMenu = new ContextMenu(this);
             Point position = new Point(0, 0);
             Graphics g = CreateGraphics();
             entryField = new EntryField(g, font, position);
@@ -117,6 +117,68 @@ namespace TestTask
             Brush fillPen = new SolidBrush(Color.FromArgb(255, 0, 255, 255));
             g.FillEllipse(fillPen, 0,0,100,100);
             entryField.Draw(g, font, new Point(0,0));
+        }
+
+        public void AddLine(object sender, EventArgs e)
+        {
+            if (selectedLine != null)
+            {
+                selectedLine.AddLine("Новая");
+                contextMenu.hide = true;
+                status = Status.list;
+            }
+        }
+
+        public void DeleteLine(object sender, EventArgs e)
+        {
+            if (selectedLine != null)
+            {
+                selectedLine.Delete();
+                contextMenu.hide = true;
+                status = Status.list;
+            }
+        }
+
+        public void IncWidth(object sender, EventArgs e)
+        {
+            LineWidth += 3;
+            foreach (OneLine line in lines)
+            {
+                line.Widht = LineWidth;
+            }
+        }
+
+        public void DecWidth(object sender, EventArgs e)
+        {
+            LineWidth -= 3;
+            foreach (OneLine line in lines)
+            {
+                line.Widht = LineWidth;
+            }
+        }
+        
+        public void IncHeight(object sender, EventArgs e)
+        {
+            LineHeight += 1;
+            foreach (OneLine line in lines)
+            {
+                line.Height = LineHeight;
+            }
+        }
+
+        public void DecHeight(object sender, EventArgs e)
+        {
+            LineHeight -= 1;
+            foreach (OneLine line in lines)
+            {
+                line.Height = LineHeight;
+            }
+        }
+
+        public void HideContextMenu(object sender, EventArgs e)
+        {
+            contextMenu.hide = true;
+            status = Status.list;
         }
 
         private void OnClick(object sender, MouseEventArgs e)
@@ -139,58 +201,7 @@ namespace TestTask
             }
             if (e.Button == MouseButtons.Left && status == Status.contextMenu)
             {
-                TestElemenCommand command = contextMenu.FindSelectedObject(location);
-                switch (command)
-                {
-                    case TestElemenCommand.incWidth:
-                        LineWidth += 3;
-                        foreach (OneLine line in lines)
-                        {
-                            line.Widht = LineWidth;
-                        }
-                        break;
-                    case TestElemenCommand.decWidth:
-                        LineWidth -= 3;
-                        foreach (OneLine line in lines)
-                        {
-                            line.Widht = LineWidth;
-                        }
-                        break;
-                    case TestElemenCommand.incHeight:
-                        LineHeight += 1;
-                        foreach (OneLine line in lines)
-                        {
-                            line.Height = LineHeight;
-                        }
-                        break;
-                    case TestElemenCommand.decHeight:
-                        LineHeight -= 1;
-                        foreach (OneLine line in lines)
-                        {
-                            line.Height = LineHeight;
-                        }
-                        break;
-                    case TestElemenCommand.add:
-                        if (selectedLine != null)
-                        {
-                            selectedLine.AddLine("Новая");
-                            contextMenu.hide = true;
-                            status = Status.list;
-                        }
-                        break;
-                    case TestElemenCommand.delete:
-                        if (selectedLine != null)
-                        {
-                            selectedLine.Delete();
-                            contextMenu.hide = true;
-                            status = Status.list;
-                        }
-                        break;
-                    case TestElemenCommand.none:
-                        status = Status.list; break;
-                    default:
-                        break;
-                }
+                contextMenu.Click(location);
             }
             if (e.Button == MouseButtons.Right)
             {

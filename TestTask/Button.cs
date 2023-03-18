@@ -9,21 +9,21 @@ namespace TestTask
     class Button
     {
         string text;
-        TestElemenCommand command;
+        EventHandler OnClick;
         int lineWidth = 80;
         int lineHeight = 20;
-        public TestElemenCommand Command
-        {
-            get
-            {
-                return command;
-            }
-        }
-        public Button(string str, TestElemenCommand com)
+
+        public Button(string str, EventHandler command)
         {
             text = str;
-            command = com;
+            OnClick = command;
         }
+
+        public void Click()
+        {
+            OnClick(this, EventArgs.Empty);
+        }
+
         public void Draw(Graphics g, Font font, ref Point location)
         {
             StringFormat stringFormat = new StringFormat();
