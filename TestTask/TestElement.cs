@@ -30,14 +30,10 @@ namespace TestTask
         private int width = 80, height = 20;
         public int xStep, yStep;
         private TestElement parent;
-        private int minWidth=80;
-        private int minHeight = 15;
         public int Widht
         {
             set
             {
-                if (value < minWidth)
-                    value = minWidth;
                 width = value;
                 foreach (var line in lines)
                 {
@@ -50,8 +46,6 @@ namespace TestTask
         {
             set
             {
-                if (value < minHeight)
-                    value = minHeight;
                 height = value;
                 xStep = height - 5;
                 foreach (var line in lines)
@@ -133,7 +127,7 @@ namespace TestTask
                 startingPoint.X += xStep;
                 foreach (OneLine line in lines)
                 {
-                    OneLine currenLine = line.FindSelectedObject(ref startingPoint, location);
+                    OneLine? currenLine = line.FindSelectedObject(ref startingPoint, location);
                     if (currenLine != null)
                         return currenLine;
                 }
@@ -243,15 +237,15 @@ namespace TestTask
         int height = 60;
         int width = 200;
         string text = "";
-        Graphics g;
+        Graphics graphics;
         Font font;
         Point location;
 
-        public EntryField(Graphics g, Font font, Point location)
+        public EntryField(Graphics g, Font f, Point loc)
         {
-            g = g;
-            font = font;
-            location = location;
+            graphics = g;
+            font = f;
+            location = loc;
         }
 
         public Point Draw(Graphics g, Font font, Point location)
@@ -276,16 +270,36 @@ namespace TestTask
     }
     class TestElement : PictureBox
     {
-        public int lineHeight;
-        public int lineWidth;
+        private int lineHeight;
+        private int lineWidth;
+        private int minWidth = 80, maxWidth = 200;
+        private int minHeight = 15, maxHeight = 30;
+        public int LineHeight
+        {
+            get { return lineHeight; }
+            set 
+            { 
+                lineHeight = value; 
+                if (lineHeight< minHeight) { lineHeight= minHeight; }
+                if (lineHeight> maxHeight) { lineHeight= maxHeight; }
+            }
+        }
+        public int LineWidth
+        {
+            get { return lineWidth; }
+            set
+            {
+                lineWidth = value;
+                if (lineWidth < minWidth) { lineWidth = minWidth; }
+                if (lineWidth > maxWidth) { lineWidth = maxWidth; }
+            }
+        }
         public Font font;
         public List <OneLine> lines;
         public Point locationSelectedLine;
         public OneLine? selectedLine;
         private ContextMenu contextMenu;
         private Status status = Status.list;
-        private int minWidth = 60, maxWidth = 200;
-        private int minHeight = 20, maxHeight = 60;
         public EntryField entryField;
         public TestElement() : base() 
         {
@@ -330,7 +344,6 @@ namespace TestTask
             Point location = e.Location;
             if (status == Status.list)
             {
-                bool isFind = false;
                 OneLine? currentLine = null;
                 foreach (OneLine line in lines)
                 {
@@ -349,31 +362,31 @@ namespace TestTask
                 switch (command)
                 {
                     case TestElemenCommand.incWidth:
-                        lineWidth += 3;
+                        LineWidth += 3;
                         foreach (OneLine line in lines)
                         {
-                            line.Widht = lineWidth;
+                            line.Widht = LineWidth;
                         }
                         break;
                     case TestElemenCommand.decWidth:
-                        lineWidth -= 3;
+                        LineWidth -= 3;
                         foreach (OneLine line in lines)
                         {
-                            line.Widht = lineWidth;
+                            line.Widht = LineWidth;
                         }
                         break;
                     case TestElemenCommand.incHeight:
-                        lineHeight += 1;
+                        LineHeight += 1;
                         foreach (OneLine line in lines)
                         {
-                            line.Height = lineHeight;
+                            line.Height = LineHeight;
                         }
                         break;
                     case TestElemenCommand.decHeight:
-                        lineHeight -= 1;
+                        LineHeight -= 1;
                         foreach (OneLine line in lines)
                         {
-                            line.Height = lineHeight;
+                            line.Height = LineHeight;
                         }
                         break;
                     case TestElemenCommand.add:
