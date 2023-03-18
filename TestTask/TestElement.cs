@@ -23,6 +23,7 @@ namespace TestTask
     }
     class OneLine
     {
+        public Point position;
         public string text;
         public List<OneLine> lines;
         public bool minimized = false;
@@ -71,6 +72,7 @@ namespace TestTask
         public Point Draw(Graphics g, Font font, Point location)
         {
             Pen blackPen = new Pen(Color.FromArgb(255, 0, 0, 0), 1);
+            position = location;
             g.DrawRectangle(blackPen, location.X, location.Y, height, height);
             g.DrawRectangle(blackPen, location.X + height, location.Y, width, height);
 
@@ -94,6 +96,12 @@ namespace TestTask
             }
             return location;
         }
+
+        public void DrawSelect(Graphics g, Brush fillBrush)
+        {
+            g.FillRectangle(fillBrush, position.X + height, position.Y, width, height);
+        }
+
         public void Click(Point point)
         {
             parent.locationSelectedLine = point;
@@ -152,6 +160,7 @@ namespace TestTask
             g.DrawRectangle(blackPen, location.X, location.Y, lineWidth, lineHeight);
             location.Y += lineHeight;
         }
+
         public bool Intersect(ref Point startingPoint, Point location)
         {
             if (location.X < startingPoint.X || location.Y < startingPoint.Y
@@ -356,6 +365,14 @@ namespace TestTask
                             line.Height = lineHeight;
                         }
                         break;
+                    case TestElemenCommand.add:
+                        if (selectedLine != null)
+                        {
+                            selectedLine.AddLine("Новая");
+                            contextMenu.hide = true;
+                            status = Status.list;
+                        }
+                        break;
                     case TestElemenCommand.none:
                         status = Status.list; break;
                     default:
@@ -387,7 +404,7 @@ namespace TestTask
             Brush fillPen = new SolidBrush(Color.FromArgb(255, 0, 255, 255));
             if (selectedLine != null)
             {
-                g.FillRectangle(fillPen, locationSelectedLine.X + lineHeight, locationSelectedLine.Y, lineWidth, lineHeight);
+                selectedLine.DrawSelect(g, fillPen);
             }
             foreach (OneLine line in lines)
             {
@@ -397,7 +414,6 @@ namespace TestTask
             {
                 contextMenu.Draw(g, font);
             }
-            //entryField.Draw(g, font, position);
         }
     }
 }
