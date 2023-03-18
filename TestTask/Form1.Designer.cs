@@ -41,9 +41,6 @@
             testElement1.Size = new Size(800, 450);
             testElement1.TabIndex = 1;
             testElement1.TabStop = false;
-            testElement1.SizeChanged += testElement1_SizeChanged;
-            testElement1.Click += testElement1_Click;
-            testElement1.PreviewKeyDown += testElement1_PreviewKeyDown;
             // 
             // Form1
             // 

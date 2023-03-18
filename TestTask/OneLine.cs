@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using TestTask;
 
 namespace TestTask
-    {
+{
     class OneLine
     {
         public Point position;
@@ -16,6 +16,9 @@ namespace TestTask
         private int width = 80, height = 20;
         public int xStep, yStep;
         private TestElement parent;
+        StringFormat stringFormat = new StringFormat();
+        Pen blackPen = new Pen(Color.FromArgb(255, 0, 0, 0), 1);
+        Pen whitePen = new Pen(Color.FromArgb(255, 255, 255, 255), 1);
         public int Widht
         {
             set
@@ -50,40 +53,55 @@ namespace TestTask
             xStep = height - 5;
             yStep = 3;
             this.parent = parent;
+            stringFormat.Alignment = StringAlignment.Center;
+            stringFormat.LineAlignment = StringAlignment.Center;
         }
+
         public void AddLine(string text)
         {
             lines.Add(new OneLine(text, width, height, parent));
         }
-        public void Delete()
+        public void Clear()
         {
             lines.Clear();
-
         }
+
         public Point Draw(Graphics g, Font font, Point location)
         {
-            Pen blackPen = new Pen(Color.FromArgb(255, 0, 0, 0), 1);
             position = location;
+            g.DrawLine(whitePen, location.X+1, location.Y+1, location.X + height*5 + width - 1, location.Y+1);
+            g.DrawLine(whitePen, location.X + 1, location.Y + 1, location.X + 1, location.Y + height - 1);
             g.DrawRectangle(blackPen, location.X, location.Y, height, height);
             g.DrawRectangle(blackPen, location.X + height, location.Y, width, height);
+            g.DrawLine(whitePen, location.X + height + 1, location.Y + 1, location.X + height + 1, location.Y + height - 1);
 
-            StringFormat stringFormat = new StringFormat();
-            stringFormat.Alignment = StringAlignment.Center;
-            stringFormat.LineAlignment = StringAlignment.Center;
             g.DrawString(text, font, new SolidBrush(Color.Black), new Point(location.X + height + width / 2, location.Y + height / 2), stringFormat);
             for (int i = 0; i < 4; i++)
             {
                 g.DrawRectangle(blackPen, location.X + height + width + i * height, location.Y, height, height);
+                g.DrawLine(whitePen, location.X + width + height*(i+1) + 1, location.Y + 1, location.X + width + height * (i + 1) + 1, location.Y + height - 1);
             }
             location.Y += height + yStep;
-            if (!minimized)
+            if (lines.Count > 0)
             {
-                location.X += xStep;
-                foreach (OneLine line in lines)
+                if (!minimized)
                 {
-                    location = line.Draw(g, font, location);
+                    location.X += xStep;
+                    Point lastElementPosition = location;
+                    foreach (OneLine line in lines)
+                    {
+                        lastElementPosition = location;
+                        g.DrawLine(whitePen, position.X + height / 2, location.Y + height / 2, location.X, location.Y + height / 2);
+                        location = line.Draw(g, font, location);
+                    }
+                    location.X -= xStep;
+                    g.DrawLine(whitePen, position.X + height / 2, position.Y + height + 1, position.X + height / 2, lastElementPosition.Y + height / 2);
+                    g.DrawString("-", font, new SolidBrush(Color.Black), new Point(position.X + height / 2, position.Y + height / 2), stringFormat);
                 }
-                location.X -= xStep;
+                else
+                {
+                    g.DrawString("+", font, new SolidBrush(Color.Black), new Point(position.X + height / 2, position.Y + height / 2), stringFormat);
+                }
             }
             return location;
         }
@@ -98,6 +116,7 @@ namespace TestTask
             parent.locationSelectedLine = point;
             minimized = !minimized;
         }
+
         public OneLine? FindSelectedObject(ref Point startingPoint, Point location)
         {
             if (location.X < startingPoint.X || location.Y < startingPoint.Y)

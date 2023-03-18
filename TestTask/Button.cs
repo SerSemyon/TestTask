@@ -12,11 +12,15 @@ namespace TestTask
         EventHandler OnClick;
         int lineWidth = 80;
         int lineHeight = 20;
+        StringFormat stringFormat = new StringFormat();
+        Pen blackPen = new Pen(Color.FromArgb(255, 0, 0, 0), 1);
 
         public Button(string str, EventHandler command)
         {
             text = str;
             OnClick = command;
+            stringFormat.Alignment = StringAlignment.Center;
+            stringFormat.LineAlignment = StringAlignment.Center;
         }
 
         public void Click()
@@ -26,11 +30,6 @@ namespace TestTask
 
         public void Draw(Graphics g, Font font, ref Point location)
         {
-            StringFormat stringFormat = new StringFormat();
-            stringFormat.Alignment = StringAlignment.Center;
-            stringFormat.LineAlignment = StringAlignment.Center;
-
-            Pen blackPen = new Pen(Color.FromArgb(255, 0, 0, 0), 1);
             g.DrawString(text, font, new SolidBrush(Color.Black), new Point(location.X + lineWidth / 2, location.Y + lineHeight / 2), stringFormat);
             g.DrawRectangle(blackPen, location.X, location.Y, lineWidth, lineHeight);
             location.Y += lineHeight;

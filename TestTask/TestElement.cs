@@ -13,10 +13,6 @@ using System.Reflection;
 
 namespace TestTask
 {
-    enum TestElemenCommand
-    {
-        add, delete, incWidth, decWidth, incHeight, decHeight, none
-    }
     enum Status
     {
         list, contextMenu, enterText
@@ -94,21 +90,25 @@ namespace TestTask
         public TestElement() : base() 
         {
             font = SystemFonts.DefaultFont;
-            lineHeight = 20;
-            lineWidth = 80;
+            lineHeight = 25;
+            lineWidth = 130;
             lines = new List<OneLine>();
-            lines.Add(new OneLine("String",lineWidth, lineHeight,this));
-            lines[0].AddLine("Блабла");
-            lines[0].lines[0].AddLine("Ещё строка");
-            lines[0].AddLine("КААК");
-            lines[0].lines[1].AddLine("dfdsaf");
-            lines[0].AddLine("Sggsg");
+            lines.Add(new OneLine("Ели",lineWidth, lineHeight,this));
+            lines[0].AddLine("мясо");
+            lines[0].lines[0].AddLine("мужики");
+            lines[0].AddLine("пивом");
+            lines[0].lines[1].AddLine("запивали");
+            lines.Add(new OneLine("О чем", lineWidth, lineHeight, this));
+            lines[1].AddLine("конюх");
+            lines[1].lines[0].AddLine("говорил");
+            lines[1].AddLine("они");
+            lines[1].lines[1].AddLine("не понимали");
             MouseClick += OnClick;
             contextMenu = new ContextMenu(this);
             Point position = new Point(0, 0);
             Graphics g = CreateGraphics();
-            entryField = new EntryField(g, font, position);
             KeyDown += OnKeyDown;
+            Draw();
         }
 
         public void OnKeyDown(object sender, KeyEventArgs e)
@@ -124,16 +124,20 @@ namespace TestTask
             if (selectedLine != null)
             {
                 selectedLine.AddLine("Новая");
-                contextMenu.hide = true;
-                status = Status.list;
             }
+            else
+            {
+                lines.Add(new OneLine("строчка", lineWidth, lineHeight, this));
+            }
+            contextMenu.hide = true;
+            status = Status.list;
         }
 
-        public void DeleteLine(object sender, EventArgs e)
+        public void ClearLine(object sender, EventArgs e)
         {
             if (selectedLine != null)
             {
-                selectedLine.Delete();
+                selectedLine.Clear();
                 contextMenu.hide = true;
                 status = Status.list;
             }
@@ -232,7 +236,7 @@ namespace TestTask
             }
             foreach (OneLine line in lines)
             {
-                line.Draw(g, font, position);
+                position = line.Draw(g, font, position);
             }
             if (status == Status.contextMenu)
             {

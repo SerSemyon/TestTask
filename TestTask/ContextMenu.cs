@@ -14,12 +14,14 @@ namespace TestTask
         public bool hide = true;
         Button[] buttons = new Button[6];
         EventHandler otherCommand;
+        Pen blackPen = new Pen(Color.FromArgb(255, 0, 0, 0), 1);
+        Brush fillPen = new SolidBrush(Color.FromArgb(255, 255, 255, 255));
 
         public ContextMenu(TestElement testElement)
         {
             position = new Point(0, 0);
             buttons[0] = new Button("Добавить", testElement.AddLine);
-            buttons[1] = new Button("Удалить", testElement.DeleteLine);
+            buttons[1] = new Button("Очистить", testElement.ClearLine);
             buttons[2] = new Button("+ ширина", testElement.IncWidth);
             buttons[3] = new Button("- ширина", testElement.DecWidth);
             buttons[4] = new Button("+ высота", testElement.IncHeight);
@@ -28,10 +30,7 @@ namespace TestTask
         }
         public Point Draw(Graphics g, Font font)
         {
-            Pen blackPen = new Pen(Color.FromArgb(255, 0, 0, 0), 1);
             g.DrawRectangle(blackPen, position.X, position.Y, lineWidth, lineHeight);
-
-            Brush fillPen = new SolidBrush(Color.FromArgb(255, 255, 255, 255));
             g.FillRectangle(fillPen, position.X, position.Y, lineWidth, lineHeight * buttons.Length);
 
             Point buttonLocation = position;
@@ -44,8 +43,6 @@ namespace TestTask
 
         public void Click(Point location)
         {
-            //if (hide)
-            //    return TestElemenCommand.none;
             if (location.X < position.X || location.Y < position.Y
                 || location.X > position.X + lineWidth || location.Y > position.Y + lineHeight * buttons.Length)
             {
