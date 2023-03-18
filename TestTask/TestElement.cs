@@ -30,10 +30,14 @@ namespace TestTask
         private int width = 80, height = 20;
         public int xStep, yStep;
         private TestElement parent;
+        private int minWidth=80;
+        private int minHeight = 15;
         public int Widht
         {
             set
             {
+                if (value < minWidth)
+                    value = minWidth;
                 width = value;
                 foreach (var line in lines)
                 {
@@ -46,6 +50,8 @@ namespace TestTask
         {
             set
             {
+                if (value < minHeight)
+                    value = minHeight;
                 height = value;
                 xStep = height - 5;
                 foreach (var line in lines)
@@ -68,6 +74,11 @@ namespace TestTask
         public void AddLine(string text)
         {
             lines.Add(new OneLine(text, width, height, parent));
+        }
+        public void Delete()
+        {
+            lines.Clear();
+            
         }
         public Point Draw(Graphics g, Font font, Point location)
         {
@@ -369,6 +380,14 @@ namespace TestTask
                         if (selectedLine != null)
                         {
                             selectedLine.AddLine("Новая");
+                            contextMenu.hide = true;
+                            status = Status.list;
+                        }
+                        break;
+                    case TestElemenCommand.delete:
+                        if (selectedLine != null)
+                        {
+                            selectedLine.Delete();
                             contextMenu.hide = true;
                             status = Status.list;
                         }
