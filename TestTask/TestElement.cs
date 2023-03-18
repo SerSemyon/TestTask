@@ -123,53 +123,97 @@ namespace TestTask
             return null;
         }
     }
-    class ContextMenu
+    class Button
     {
+        string text;
+        TestElemenCommand command;
         int lineWidth = 80;
         int lineHeight = 20;
-        public Point location;
-        bool hide = true;
-        string[] elements = { "Добавить", "Удалить", "Задать ширину","Задать высоту"};
-
-        public ContextMenu() 
+        public TestElemenCommand Command
         {
-            location = new Point(0, 0);
+            get
+            {
+                return command;
+            }
         }
-        public Point Draw(Graphics g, Font font)
+        public Button (string str,  TestElemenCommand com)
         {
-            Pen blackPen = new Pen(Color.FromArgb(255, 0, 0, 0), 1);
-            g.DrawRectangle(blackPen, location.X, location.Y, lineWidth, lineHeight);
-
+            text = str;
+            command = com;
+        }
+        public void Draw(Graphics g, Font font, ref Point location)
+        {
             StringFormat stringFormat = new StringFormat();
             stringFormat.Alignment = StringAlignment.Center;
             stringFormat.LineAlignment = StringAlignment.Center;
 
-            Brush fillPen = new SolidBrush(Color.FromArgb(255, 255, 255, 255));
-            g.FillRectangle(fillPen, location.X, location.Y, lineWidth, lineHeight*elements.Length);
-
-            for (int i  = 0; i < elements.Length; i++)
+            Pen blackPen = new Pen(Color.FromArgb(255, 0, 0, 0), 1);
+            g.DrawString(text, font, new SolidBrush(Color.Black), new Point(location.X + lineWidth / 2, location.Y + lineHeight / 2), stringFormat);
+            g.DrawRectangle(blackPen, location.X, location.Y, lineWidth, lineHeight);
+            location.Y += lineHeight;
+        }
+        public bool Intersect(ref Point startingPoint, Point location)
+        {
+            if (location.X < startingPoint.X || location.Y < startingPoint.Y
+                || location.X > startingPoint.X + lineWidth || location.Y > startingPoint.Y + lineHeight)
             {
-                g.DrawString(elements[i], font, new SolidBrush(Color.Black), new Point(location.X + lineWidth / 2, location.Y + i*lineHeight + lineHeight / 2), stringFormat);
-                g.DrawRectangle(blackPen, location.X, location.Y + i * lineHeight, lineWidth, lineHeight);
+                startingPoint.Y += lineHeight;
+                return false;
             }
-            return location;
+            startingPoint.Y += lineHeight;
+            return true;
+        }
+    }
+    class ContextMenu
+    {
+        int lineWidth = 80;
+        int lineHeight = 20;
+        public Point position;
+        public bool hide = true;
+        Button[] buttons = new Button[6];
+
+        public ContextMenu() 
+        {
+            position = new Point(0, 0);
+            buttons[0] = new Button("Добавить", TestElemenCommand.add);
+            buttons[1] = new Button("Удалить", TestElemenCommand.delete);
+            buttons[2] = new Button("+ ширина", TestElemenCommand.incWidth);
+            buttons[3] = new Button("- ширина", TestElemenCommand.decWidth);
+            buttons[4] = new Button("+ высота", TestElemenCommand.incHeight);
+            buttons[5] = new Button("- высота", TestElemenCommand.decHeight);
+        }
+        public Point Draw(Graphics g, Font font)
+        {
+            Pen blackPen = new Pen(Color.FromArgb(255, 0, 0, 0), 1);
+            g.DrawRectangle(blackPen, position.X, position.Y, lineWidth, lineHeight);
+
+            Brush fillPen = new SolidBrush(Color.FromArgb(255, 255, 255, 255));
+            g.FillRectangle(fillPen, position.X, position.Y, lineWidth, lineHeight*buttons.Length);
+
+            Point buttonLocation = position;
+            foreach (Button button in buttons)
+            {
+                button.Draw(g,font,ref buttonLocation);
+            }
+            return position;
         }
         public void Click(Point point)
         {
 
         }
-        public TestElemenCommand FindSelectedObject(ref Point startingPoint, Point location)
+        public TestElemenCommand FindSelectedObject(Point location)
         {
             if (hide)
                 return TestElemenCommand.none;
-            if (location.X < startingPoint.X || location.Y < startingPoint.Y)
+            if (location.X < position.X || location.Y < position.Y 
+                || location.X > position.X + lineWidth || location.Y > position.Y + lineHeight * buttons.Length)
                 return TestElemenCommand.none;
-            if (location.Y - startingPoint.Y < lineHeight)
+            Point buttonLocation = position;
+            for (int i = 0; i<buttons.Length; i++)
             {
-                Click(startingPoint);
-                return TestElemenCommand.add;
+                if (buttons[i].Intersect(ref buttonLocation, location))
+                    return buttons[i].Command;
             }
-            
             return TestElemenCommand.none;
         }
     }
@@ -279,18 +323,41 @@ namespace TestTask
                 }
                 selectedLine = currentLine;
             }
-            if (e.Button == MouseButtons.Left || status == Status.contextMenu)
+            if (e.Button == MouseButtons.Left && status == Status.contextMenu)
             {
-                TestElemenCommand command = contextMenu.FindSelectedObject(ref startingPoint, location);
+                TestElemenCommand command = contextMenu.FindSelectedObject(location);
                 switch (command)
                 {
-                    case TestElemenCommand.add:
+                    case TestElemenCommand.incWidth:
                         lineWidth += 3;
                         foreach (OneLine line in lines)
                         {
                             line.Widht = lineWidth;
                         }
                         break;
+                    case TestElemenCommand.decWidth:
+                        lineWidth -= 3;
+                        foreach (OneLine line in lines)
+                        {
+                            line.Widht = lineWidth;
+                        }
+                        break;
+                    case TestElemenCommand.incHeight:
+                        lineHeight += 1;
+                        foreach (OneLine line in lines)
+                        {
+                            line.Height = lineHeight;
+                        }
+                        break;
+                    case TestElemenCommand.decHeight:
+                        lineHeight -= 1;
+                        foreach (OneLine line in lines)
+                        {
+                            line.Height = lineHeight;
+                        }
+                        break;
+                    case TestElemenCommand.none:
+                        status = Status.list; break;
                     default:
                         break;
                 }
@@ -298,11 +365,15 @@ namespace TestTask
             if (e.Button == MouseButtons.Right)
             {
                 if (status == Status.contextMenu)
+                {
+                    contextMenu.hide = true;
                     status = Status.list;
+                }
                 else if (status == Status.list)
                 {
+                    contextMenu.hide = false;
                     status = Status.contextMenu;
-                    contextMenu.location = e.Location;
+                    contextMenu.position = e.Location;
                 }
             }
             Draw();
