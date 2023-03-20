@@ -86,7 +86,6 @@ namespace TestTask
         public OneLine? selectedLine;
         private ContextMenu contextMenu;
         private Status status = Status.list;
-        public EntryField entryField;
         public TestElement() : base() 
         {
             font = SystemFonts.DefaultFont;
@@ -107,16 +106,7 @@ namespace TestTask
             contextMenu = new ContextMenu(this);
             Point position = new Point(0, 0);
             Graphics g = CreateGraphics();
-            KeyDown += OnKeyDown;
             Draw();
-        }
-
-        public void OnKeyDown(object sender, KeyEventArgs e)
-        {
-            Graphics g = CreateGraphics();
-            Brush fillPen = new SolidBrush(Color.FromArgb(255, 0, 255, 255));
-            g.FillEllipse(fillPen, 0,0,100,100);
-            entryField.Draw(g, font, new Point(0,0));
         }
 
         public void AddLine(object sender, EventArgs e)
@@ -129,8 +119,7 @@ namespace TestTask
             {
                 lines.Add(new OneLine("строчка", lineWidth, lineHeight, this));
             }
-            contextMenu.hide = true;
-            status = Status.list;
+            HideContextMenu();
         }
 
         public void ClearLine(object sender, EventArgs e)
@@ -138,8 +127,7 @@ namespace TestTask
             if (selectedLine != null)
             {
                 selectedLine.Clear();
-                contextMenu.hide = true;
-                status = Status.list;
+                HideContextMenu();
             }
         }
 
@@ -179,10 +167,17 @@ namespace TestTask
             }
         }
 
-        public void HideContextMenu(object sender, EventArgs e)
+        public void HideContextMenu()
         {
             contextMenu.hide = true;
             status = Status.list;
+        }
+
+        public void ShowContextMenu(Point position)
+        {
+            contextMenu.hide = false;
+            status = Status.contextMenu;
+            contextMenu.position = position;
         }
 
         private void OnClick(object sender, MouseEventArgs e)
@@ -211,14 +206,11 @@ namespace TestTask
             {
                 if (status == Status.contextMenu)
                 {
-                    contextMenu.hide = true;
-                    status = Status.list;
+                    HideContextMenu();
                 }
                 else if (status == Status.list)
                 {
-                    contextMenu.hide = false;
-                    status = Status.contextMenu;
-                    contextMenu.position = e.Location;
+                    ShowContextMenu(e.Location);
                 }
             }
             Draw();

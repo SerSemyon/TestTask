@@ -13,7 +13,7 @@ namespace TestTask
         public Point position;
         public bool hide = true;
         Button[] buttons = new Button[6];
-        EventHandler otherCommand;
+        Action otherCommand;
         Pen blackPen = new Pen(Color.FromArgb(255, 0, 0, 0), 1);
         Brush fillPen = new SolidBrush(Color.FromArgb(255, 255, 255, 255));
 
@@ -46,7 +46,7 @@ namespace TestTask
             if (location.X < position.X || location.Y < position.Y
                 || location.X > position.X + lineWidth || location.Y > position.Y + lineHeight * buttons.Length)
             {
-                otherCommand(this, EventArgs.Empty);
+                otherCommand();
                 return;
             }
             Point buttonLocation = position;
