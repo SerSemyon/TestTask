@@ -120,7 +120,10 @@ namespace TestTask
         public OneLine? FindSelectedObject(ref Point startingPoint, Point location)
         {
             if (location.X < startingPoint.X || location.Y < startingPoint.Y)
+            {
+                startingPoint.Y += height + yStep;
                 return null;
+            }
             if (location.Y - startingPoint.Y < height)
             {
                 Click(startingPoint);
@@ -134,7 +137,10 @@ namespace TestTask
                 {
                     OneLine? currenLine = line.FindSelectedObject(ref startingPoint, location);
                     if (currenLine != null)
+                    {
+                        startingPoint.X -= xStep;
                         return currenLine;
+                    }
                 }
                 startingPoint.X -= xStep;
             }

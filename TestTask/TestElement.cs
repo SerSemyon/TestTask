@@ -190,10 +190,10 @@ namespace TestTask
             bufferGraphics = bufferContext.Allocate(graphics, new Rectangle(0, 0, Width, Height));
             Graphics g = bufferGraphics.Graphics;
             g.Clear(Color.FromArgb(255, 192,192,192));
-            Brush fillPen = new SolidBrush(Color.FromArgb(255, 0, 255, 255));
+            Brush fillBrush = new SolidBrush(Color.FromArgb(255, 0, 255, 255));
             if (selectedLine != null)
             {
-                selectedLine.DrawSelect(g, fillPen);
+                selectedLine.DrawSelect(g, fillBrush);
             }
             foreach (OneLine line in lines)
             {
