@@ -17,43 +17,7 @@ namespace TestTask
     {
         list, contextMenu, enterText
     }
-    class EntryField
-    {
-        Point position;
-        int height = 60;
-        int width = 200;
-        string text = "";
-        Graphics graphics;
-        Font font;
-        Point location;
 
-        public EntryField(Graphics g, Font f, Point loc)
-        {
-            graphics = g;
-            font = f;
-            location = loc;
-        }
-
-        public Point Draw(Graphics g, Font font, Point location)
-        {
-            Pen blackPen = new Pen(Color.FromArgb(255, 0, 0, 0), 1);
-            g.DrawRectangle(blackPen, location.X, location.Y, height, height);
-            g.DrawRectangle(blackPen, location.X + height, location.Y, width, height);
-
-            StringFormat stringFormat = new StringFormat();
-            stringFormat.Alignment = StringAlignment.Center;
-            stringFormat.LineAlignment = StringAlignment.Center;
-
-            Brush fillPen = new SolidBrush(Color.FromArgb(255, 0, 255, 255));
-            g.FillRectangle(fillPen, location.X + height, location.Y, width, height);
-            g.DrawString(text, font, new SolidBrush(Color.Black), new Point(location.X + height + width / 2, location.Y + height / 2), stringFormat);
-            for (int i = 0; i < 4; i++)
-            {
-                g.DrawRectangle(blackPen, location.X + height + width + i * height, location.Y, height, height);
-            }
-            return location;
-        }
-    }
     class TestElement : PictureBox
     {
         private int lineHeight;
