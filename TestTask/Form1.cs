@@ -17,7 +17,7 @@ namespace TestTask
 
         private void testElement1_LoadCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
-            testElement1.Draw();
+
         }
 
         private void Form1_SizeChanged(object sender, EventArgs e)

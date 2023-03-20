@@ -59,16 +59,6 @@ namespace TestTask
             lineHeight = 25;
             lineWidth = 130;
             lines = new List<OneLine>();
-            lines.Add(new OneLine("Ели",lineWidth, lineHeight,this));
-            lines[0].AddLine("мясо");
-            lines[0].lines[0].AddLine("мужики");
-            lines[0].AddLine("пивом");
-            lines[0].lines[1].AddLine("запивали");
-            lines.Add(new OneLine("О чем", lineWidth, lineHeight, this));
-            lines[1].AddLine("конюх");
-            lines[1].lines[0].AddLine("говорил");
-            lines[1].AddLine("они");
-            lines[1].lines[1].AddLine("не понимали");
             MouseClick += OnClick;
             SizeChanged += OnSizeChanged;
             contextMenu = new ContextMenu(this);
@@ -101,6 +91,14 @@ namespace TestTask
             {
                 selectedLine.Clear();
                 HideContextMenu();
+            }
+            else
+            {
+                foreach (OneLine line in lines)
+                {
+                    line.Clear();
+                }
+                lines.Clear();
             }
         }
 
@@ -192,24 +190,24 @@ namespace TestTask
         public void Draw()
         {
             Point position=new Point(0, 0);
-            Graphics graphics = CreateGraphics();
-            bufferGraphics = bufferContext.Allocate(graphics, new Rectangle(0, 0, Width, Height));
-            Graphics g = bufferGraphics.Graphics;
-            g.Clear(Color.FromArgb(255, 192,192,192));
+            Graphics graphicsToShow = CreateGraphics();
+            bufferGraphics = bufferContext.Allocate(graphicsToShow, new Rectangle(0, 0, Width, Height));
+            Graphics graphicsInBuffer = bufferGraphics.Graphics;
+            graphicsInBuffer.Clear(Color.FromArgb(255, 192,192,192));
             Brush fillBrush = new SolidBrush(Color.FromArgb(255, 0, 255, 255));
             if (selectedLine != null)
             {
-                selectedLine.DrawSelect(g, fillBrush);
+                selectedLine.DrawSelect(graphicsInBuffer, fillBrush);
             }
             foreach (OneLine line in lines)
             {
-                position = line.Draw(g, font, position);
+                position = line.Draw(graphicsInBuffer, font, position);
             }
             if (status == Status.contextMenu)
             {
-                contextMenu.Draw(g, font);
+                contextMenu.Draw(graphicsInBuffer, font);
             }
-            bufferGraphics.Render(graphics);
+            bufferGraphics.Render(graphicsToShow);
         }
     }
 }
