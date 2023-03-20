@@ -19,5 +19,13 @@ namespace TestTask
         {
             testElement1.Draw();
         }
+
+        private void Form1_SizeChanged(object sender, EventArgs e)
+        {
+        }
+
+        private void testElement1_SizeChanged(object sender, EventArgs e)
+        {
+        }
     }
 }

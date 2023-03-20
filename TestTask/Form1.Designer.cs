@@ -45,6 +45,7 @@
             testElement1.TabIndex = 1;
             testElement1.TabStop = false;
             testElement1.LoadCompleted += testElement1_LoadCompleted;
+            testElement1.SizeChanged += testElement1_SizeChanged;
             // 
             // Form1
             // 
@@ -54,6 +55,7 @@
             Controls.Add(testElement1);
             Name = "Form1";
             Text = "Form1";
+            SizeChanged += Form1_SizeChanged;
             ((System.ComponentModel.ISupportInitialize)testElement1).EndInit();
             ResumeLayout(false);
             PerformLayout();

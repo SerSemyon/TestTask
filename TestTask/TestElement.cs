@@ -70,9 +70,15 @@ namespace TestTask
             lines[1].AddLine("они");
             lines[1].lines[1].AddLine("не понимали");
             MouseClick += OnClick;
+            SizeChanged += OnSizeChanged;
             contextMenu = new ContextMenu(this);
             Point position = new Point(0, 0);
             bufferContext = new BufferedGraphicsContext();
+            Draw();
+        }
+
+        private void OnSizeChanged(object sender, EventArgs e)
+        {
             Draw();
         }
 

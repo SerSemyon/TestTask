@@ -117,14 +117,28 @@ namespace TestTask
             minimized = !minimized;
         }
 
+        public void MovePointToEndElement(ref Point point)
+        {
+            point.Y += height + yStep;
+            if (!minimized)
+            {
+                point.X += xStep;
+                foreach (OneLine line in lines)
+                {
+                    line.MovePointToEndElement(ref point);
+                }
+                point.X -= xStep;
+            }
+        }
+
         public OneLine? FindSelectedObject(ref Point startingPoint, Point location)
         {
             if (location.X < startingPoint.X || location.Y < startingPoint.Y)
             {
-                startingPoint.Y += height + yStep;
+                MovePointToEndElement(ref startingPoint);
                 return null;
             }
-            if (location.Y - startingPoint.Y < height)
+            if (location.Y < startingPoint.Y + height && location.X < (startingPoint.X + width + height * 5))
             {
                 Click(startingPoint);
                 return this;
