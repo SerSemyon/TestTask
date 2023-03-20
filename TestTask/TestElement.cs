@@ -163,7 +163,6 @@ namespace TestTask
                     currentLine = line.FindSelectedObject(ref startingPoint, location);
                     if (currentLine != null)
                     {
-                        selectedLine = currentLine;
                         break;
                     }
                 }
@@ -201,7 +200,7 @@ namespace TestTask
             }
             foreach (OneLine line in lines)
             {
-                position = line.Draw(graphicsInBuffer, font, position);
+                line.Draw(graphicsInBuffer, font, ref position);
             }
             if (status == Status.contextMenu)
             {

@@ -11,7 +11,7 @@ namespace TestTask
     {
         public Point position;
         public string text;
-        public List<OneLine> lines;
+        List<OneLine> lines;
         public bool minimized = false;
         private int width = 80, height = 20;
         public int xStep, yStep;
@@ -68,7 +68,7 @@ namespace TestTask
             lines.Clear();
         }
 
-        public Point Draw(Graphics g, Font font, Point location)
+        public void Draw(Graphics g, Font font, ref Point location)
         {
             position = location;
             g.DrawLine(whitePen, location.X+1, location.Y+1, location.X + height*5 + width - 1, location.Y+1);
@@ -94,7 +94,7 @@ namespace TestTask
                     {
                         lastElementPosition = location;
                         g.DrawLine(whitePen, position.X + height / 2, location.Y + height / 2, location.X, location.Y + height / 2);
-                        location = line.Draw(g, font, location);
+                        line.Draw(g, font, ref location);
                     }
                     location.X -= xStep;
                     g.DrawLine(whitePen, position.X + height / 2, position.Y + height + 1, position.X + height / 2, lastElementPosition.Y + height / 2);
@@ -105,7 +105,6 @@ namespace TestTask
                     g.DrawString("+", font, new SolidBrush(Color.Black), new Point(position.X + height / 2, position.Y + height / 2), stringFormat);
                 }
             }
-            return location;
         }
 
         public void DrawSelect(Graphics g, Brush fillBrush)
