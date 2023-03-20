@@ -30,7 +30,6 @@ namespace TestTask
         }
         public Point Draw(Graphics g, Font font)
         {
-            g.DrawRectangle(blackPen, position.X, position.Y, lineWidth, lineHeight);
             g.FillRectangle(fillPen, position.X, position.Y, lineWidth, lineHeight * buttons.Length);
 
             Point buttonLocation = position;
@@ -55,6 +54,7 @@ namespace TestTask
                 if (buttons[i].Intersect(ref buttonLocation, location))
                 {
                     buttons[i].Click();
+                    return;
                 }
             }
         }

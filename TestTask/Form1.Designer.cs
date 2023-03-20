@@ -36,11 +36,15 @@
             // 
             testElement1.BorderStyle = BorderStyle.Fixed3D;
             testElement1.Dock = DockStyle.Fill;
+            testElement1.LineHeight = 25;
+            testElement1.LineWidth = 130;
             testElement1.Location = new Point(0, 0);
             testElement1.Name = "testElement1";
             testElement1.Size = new Size(800, 450);
+            testElement1.SizeMode = PictureBoxSizeMode.AutoSize;
             testElement1.TabIndex = 1;
             testElement1.TabStop = false;
+            testElement1.LoadCompleted += testElement1_LoadCompleted;
             // 
             // Form1
             // 
@@ -52,6 +56,7 @@
             Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)testElement1).EndInit();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion

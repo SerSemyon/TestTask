@@ -50,8 +50,11 @@ namespace TestTask
         public OneLine? selectedLine;
         private ContextMenu contextMenu;
         private Status status = Status.list;
+        BufferedGraphics bufferGraphics;
+        BufferedGraphicsContext bufferContext;
         public TestElement() : base() 
         {
+            DoubleBuffered = true;
             font = SystemFonts.DefaultFont;
             lineHeight = 25;
             lineWidth = 130;
@@ -69,7 +72,7 @@ namespace TestTask
             MouseClick += OnClick;
             contextMenu = new ContextMenu(this);
             Point position = new Point(0, 0);
-            Graphics g = CreateGraphics();
+            bufferContext = new BufferedGraphicsContext();
             Draw();
         }
 
@@ -183,7 +186,9 @@ namespace TestTask
         public void Draw()
         {
             Point position=new Point(0, 0);
-            Graphics g = CreateGraphics();
+            Graphics graphics = CreateGraphics();
+            bufferGraphics = bufferContext.Allocate(graphics, new Rectangle(0, 0, Width, Height));
+            Graphics g = bufferGraphics.Graphics;
             g.Clear(Color.FromArgb(255, 192,192,192));
             Brush fillPen = new SolidBrush(Color.FromArgb(255, 0, 255, 255));
             if (selectedLine != null)
@@ -198,6 +203,7 @@ namespace TestTask
             {
                 contextMenu.Draw(g, font);
             }
+            bufferGraphics.Render(graphics);
         }
     }
 }

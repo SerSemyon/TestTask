@@ -9,5 +9,15 @@ namespace TestTask
         {
             InitializeComponent();
         }
+
+        private void testElement1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void testElement1_LoadCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
+        {
+            testElement1.Draw();
+        }
     }
 }
