@@ -90,7 +90,6 @@ namespace TestTask
             if (selectedLine != null)
             {
                 selectedLine.Clear();
-                HideContextMenu();
             }
             else
             {
@@ -100,6 +99,7 @@ namespace TestTask
                 }
                 lines.Clear();
             }
+            HideContextMenu();
         }
 
         public void IncWidth(object sender, EventArgs e)

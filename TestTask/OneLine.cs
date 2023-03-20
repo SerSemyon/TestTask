@@ -63,6 +63,8 @@ namespace TestTask
         }
         public void Clear()
         {
+            foreach (var line in lines)
+                line.Clear();
             lines.Clear();
         }
 
