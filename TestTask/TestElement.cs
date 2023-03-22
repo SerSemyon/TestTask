@@ -45,7 +45,7 @@ namespace TestTask
             }
         }
         public Font font;
-        public List <OneLine> lines;
+        List <OneLine> lines;
         public Point locationSelectedLine;
         public OneLine? selectedLine;
         private ContextMenu contextMenu;
@@ -54,7 +54,6 @@ namespace TestTask
         BufferedGraphicsContext bufferContext;
         public TestElement() : base() 
         {
-            DoubleBuffered = true;
             font = SystemFonts.DefaultFont;
             lineHeight = 25;
             lineWidth = 130;
@@ -62,7 +61,6 @@ namespace TestTask
             MouseClick += OnClick;
             SizeChanged += OnSizeChanged;
             contextMenu = new ContextMenu(this);
-            Point position = new Point(0, 0);
             bufferContext = new BufferedGraphicsContext();
             Draw();
         }
@@ -193,9 +191,9 @@ namespace TestTask
             bufferGraphics = bufferContext.Allocate(graphicsToShow, new Rectangle(0, 0, Width, Height));
             Graphics graphicsInBuffer = bufferGraphics.Graphics;
             graphicsInBuffer.Clear(Color.FromArgb(255, 192,192,192));
-            Brush fillBrush = new SolidBrush(Color.FromArgb(255, 0, 255, 255));
             if (selectedLine != null)
             {
+                Brush fillBrush = new SolidBrush(Color.FromArgb(255, 0, 255, 255));
                 selectedLine.DrawSelect(graphicsInBuffer, fillBrush);
             }
             foreach (OneLine line in lines)

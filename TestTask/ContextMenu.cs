@@ -28,7 +28,7 @@ namespace TestTask
             buttons[5] = new Button("- высота", testElement.DecHeight);
             otherCommand = testElement.HideContextMenu;
         }
-        public Point Draw(Graphics g, Font font)
+        public void Draw(Graphics g, Font font)
         {
             g.FillRectangle(fillPen, position.X, position.Y, lineWidth, lineHeight * buttons.Length);
 
@@ -37,7 +37,6 @@ namespace TestTask
             {
                 button.Draw(g, font, ref buttonLocation);
             }
-            return position;
         }
 
         public void Click(Point location)
