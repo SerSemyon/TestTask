@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace TestTask
 {
@@ -13,7 +14,6 @@ namespace TestTask
         public Point position;
         public bool hide = true;
         Button[] buttons = new Button[6];
-        Action otherCommand;
         Pen blackPen = new Pen(Color.FromArgb(255, 0, 0, 0), 1);
         Brush fillPen = new SolidBrush(Color.FromArgb(255, 255, 255, 255));
 
@@ -26,35 +26,45 @@ namespace TestTask
             buttons[3] = new Button("- ширина", testElement.DecWidth);
             buttons[4] = new Button("+ высота", testElement.IncHeight);
             buttons[5] = new Button("- высота", testElement.DecHeight);
-            otherCommand = testElement.HideContextMenu;
         }
         public void Draw(Graphics g, Font font)
         {
-            g.FillRectangle(fillPen, position.X, position.Y, lineWidth, lineHeight * buttons.Length);
-
-            Point buttonLocation = position;
-            foreach (Button button in buttons)
+            if (!hide)
             {
-                button.Draw(g, font, ref buttonLocation);
+                g.FillRectangle(fillPen, position.X, position.Y, lineWidth, lineHeight * buttons.Length);
+
+                Point buttonLocation = position;
+                foreach (Button button in buttons)
+                {
+                    button.Draw(g, font, ref buttonLocation);
+                }
             }
         }
-
-        public void Click(Point location)
+        public void Click(object sender, MouseEventArgs e)
         {
-            if (location.X < position.X || location.Y < position.Y
-                || location.X > position.X + lineWidth || location.Y > position.Y + lineHeight * buttons.Length)
+            Point location = e.Location;
+            if (!hide)
             {
-                otherCommand();
-                return;
-            }
-            Point buttonLocation = position;
-            for (int i = 0; i < buttons.Length; i++)
-            {
-                if (buttons[i].Intersect(ref buttonLocation, location))
+                if (location.X < position.X || location.Y < position.Y
+                    || location.X > position.X + lineWidth || location.Y > position.Y + lineHeight * buttons.Length)
                 {
-                    buttons[i].Click();
+                    hide = true;
                     return;
                 }
+                Point buttonLocation = position;
+                for (int i = 0; i < buttons.Length; i++)
+                {
+                    if (buttons[i].Intersect(ref buttonLocation, location))
+                    {
+                        buttons[i].Click();
+                        return;
+                    }
+                }
+            }
+            if (e.Button == MouseButtons.Right && hide)
+            {
+                hide = false;
+                position = location;
             }
         }
     }

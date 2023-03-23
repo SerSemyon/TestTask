@@ -13,10 +13,6 @@ using System.Reflection;
 
 namespace TestTask
 {
-    enum Status
-    {
-        list, contextMenu, enterText
-    }
 
     class TestElement : PictureBox
     {
@@ -49,7 +45,6 @@ namespace TestTask
         public Point locationSelectedLine;
         public OneLine? selectedLine;
         private ContextMenu contextMenu;
-        private Status status = Status.list;
         BufferedGraphics bufferGraphics;
         BufferedGraphicsContext bufferContext;
         public TestElement() : base() 
@@ -80,7 +75,7 @@ namespace TestTask
             {
                 lines.Add(new OneLine("строчка", lineWidth, lineHeight, this));
             }
-            HideContextMenu();
+            contextMenu.hide = true;
         }
 
         public void ClearLine(object sender, EventArgs e)
@@ -97,7 +92,7 @@ namespace TestTask
                 }
                 lines.Clear();
             }
-            HideContextMenu();
+            contextMenu.hide = true;
         }
 
         public void IncWidth(object sender, EventArgs e)
@@ -136,26 +131,11 @@ namespace TestTask
             }
         }
 
-        public void HideContextMenu()
+        private void FindSelectedLine(Point startingPoint, Point location)
         {
-            contextMenu.hide = true;
-            status = Status.list;
-        }
-
-        public void ShowContextMenu(Point position)
-        {
-            contextMenu.hide = false;
-            status = Status.contextMenu;
-            contextMenu.position = position;
-        }
-
-        private void OnClick(object sender, MouseEventArgs e)
-        {
-            Point startingPoint = new Point(0, 0);
-            Point location = e.Location;
-            if (status == Status.list)
+            OneLine? currentLine = null;
+            if (contextMenu.hide)
             {
-                OneLine? currentLine = null;
                 foreach (OneLine line in lines)
                 {
                     currentLine = line.FindSelectedObject(ref startingPoint, location);
@@ -166,21 +146,14 @@ namespace TestTask
                 }
                 selectedLine = currentLine;
             }
-            if (e.Button == MouseButtons.Left && status == Status.contextMenu)
-            {
-                contextMenu.Click(location);
-            }
-            if (e.Button == MouseButtons.Right)
-            {
-                if (status == Status.contextMenu)
-                {
-                    HideContextMenu();
-                }
-                else if (status == Status.list)
-                {
-                    ShowContextMenu(e.Location);
-                }
-            }
+        }
+
+        private void OnClick(object sender, MouseEventArgs e)
+        {
+            Point startingPoint = new Point(0, 0);
+            Point location = e.Location;
+            FindSelectedLine(startingPoint, location);
+            contextMenu.Click(this,e);
             Draw();
         }
 
@@ -200,10 +173,7 @@ namespace TestTask
             {
                 line.Draw(graphicsInBuffer, font, ref position);
             }
-            if (status == Status.contextMenu)
-            {
-                contextMenu.Draw(graphicsInBuffer, font);
-            }
+            contextMenu.Draw(graphicsInBuffer, font);
             bufferGraphics.Render(graphicsToShow);
         }
     }
